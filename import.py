@@ -14,7 +14,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 # Load the dataset into a DataFrame
-dataset_path = r'c:\Users\SHREYA\OneDrive\Documents\MVP\WASHINGTON (CNN).xlsx'
+dataset_path = r'C:\Users\SHREYA\OneDrive\Documents\MVP-Streamlit\MVP-Stream\WASHINGTON (CNN).xlsx'
 df = pd.read_excel(dataset_path)
 
 # Preprocess the dataset
