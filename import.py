@@ -14,7 +14,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 # Load the dataset into a DataFrame
-dataset_path = "./WASHINGTON (CNN)1.csv"
+dataset_path = "WASHINGTON (CNN)1.csv"
 df = pd.read_csv(dataset_path)
 
 # Preprocess the dataset
