@@ -1,24 +1,18 @@
 import os
 import streamlit as st
 import requests
-import transformers
 from bs4 import BeautifulSoup
 from transformers import pipeline
-import pandas as pd
-import nltk
-from nltk.tokenize import sent_tokenize
-from nltk.corpus import stopwords
-import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from app2 import preprocess_text
 from utils.b2 import B2
 from dotenv import load_dotenv
+import pandas as pd
+import nltk
+
 # Download NLTK resources (run once)
 nltk.download('punkt')
 nltk.download('stopwords')
-
-
-
 
 # ------------------------------------------------------
 #                        CONFIG
@@ -30,26 +24,28 @@ REMOTE_DATA = 'WASHINGTON (CNN)1.csv'
 b2 = B2(endpoint=os.environ['B2_ENDPOINT'],
         key_id=os.environ['B2_keyID'],
         secret_key=os.environ['B2_applicationKey'])
-@st.cache_data
+
 def get_data():
     # collect data frame of reviews and their sentiment
     b2.set_bucket(os.environ['B2_BUCKETNAME'])
     df= b2.get_df(REMOTE_DATA)
+    return df
 
+@st.cache(allow_output_mutation=True)
+def preprocess_data(df):
+    preprocessed_articles = []
+    for article_text in df['article']:
+        preprocessed_articles.append(preprocess_text(article_text))
 
-preprocessed_articles = []
-for article_text in df['article']:
-    preprocessed_articles.append(preprocess_text(article_text))
+    preprocessed_texts = [' '.join(sentences) for sentences in preprocessed_articles]
 
-preprocessed_texts = [' '.join(sentences) for sentences in preprocessed_articles]
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(preprocessed_texts)
 
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(preprocessed_texts)
-feature_names = vectorizer.get_feature_names_out()
+    return vectorizer, tfidf_matrix, preprocessed_articles
 
 # Load your extractive summarization model
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-
 
 # Function to fetch article content from URL
 def fetch_article_content(url):
@@ -73,6 +69,7 @@ def main():
             article_text = fetch_article_content(article_url)
             if article_text:
                 preprocessed_article = preprocess_text(article_text)
+                vectorizer, tfidf_matrix, preprocessed_articles = preprocess_data(get_data())
                 tfidf_scores = [sum(tfidf_matrix[0, vectorizer.vocabulary_[word]] for word in sentence.split() if word in vectorizer.vocabulary_) for sentence in preprocessed_article]
                 top_sentence_indices = sorted(range(len(tfidf_scores)), key=lambda i: tfidf_scores[i], reverse=True)[:3]
                 top_sentences = [preprocessed_article[j] for j in top_sentence_indices]
