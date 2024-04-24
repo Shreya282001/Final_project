@@ -122,7 +122,7 @@ stack-data==0.6.3
 streamlit==1.33.0
 tenacity==8.2.3
 terminado==0.18.0
-transformers==4.39.3
+transformers==4.11.3
 threadpoolctl==3.2.0
 tinycss2==1.2.1
 toml==0.10.2

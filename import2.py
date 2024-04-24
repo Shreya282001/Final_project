@@ -1,5 +1,7 @@
+import os
 import streamlit as st
 import requests
+import transformers
 from bs4 import BeautifulSoup
 from transformers import pipeline
 import pandas as pd
@@ -9,15 +11,30 @@ from nltk.corpus import stopwords
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from app2 import preprocess_text
-
+from utils.b2 import B2
+from dotenv import load_dotenv
 # Download NLTK resources (run once)
 nltk.download('punkt')
 nltk.download('stopwords')
 
-# Load the dataset into a DataFrame
-dataset_path = "WASHINGTON (CNN)1.csv"
-df = pd.read_csv(dataset_path)
 
+
+
+# ------------------------------------------------------
+#                        CONFIG
+# ------------------------------------------------------
+load_dotenv()
+
+REMOTE_DATA = 'WASHINGTON (CNN)1.csv'
+# load Backblaze connection
+b2 = B2(endpoint=os.environ['B2_ENDPOINT'],
+        key_id=os.environ['B2_keyID'],
+        secret_key=os.environ['B2_applicationKey'])
+@st.cache_data
+def get_data():
+    # collect data frame of reviews and their sentiment
+    b2.set_bucket(os.environ['B2_BUCKETNAME'])
+    df= b2.get_df(REMOTE_DATA)
 
 
 preprocessed_articles = []
