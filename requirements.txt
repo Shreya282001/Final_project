@@ -144,4 +144,4 @@ websocket-client==1.7.0
 Werkzeug==3.0.1
 widgetsnbextension==4.0.10
 zipp==3.17.0
-torch==2.1.0
+pytorch
