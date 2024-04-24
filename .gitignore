@@ -1,2 +1,3 @@
-requirements.txt
-README.md
+.env
+.gitattributes
+__pycache__
