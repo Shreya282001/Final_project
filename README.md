@@ -1,7 +1,5 @@
 <h1>Abstract or Overview</h1>:
 The goal of this project is to construct a web application that summarises CNN articles using extractive summarization techniques. The application allows users to enter a CNN article URL and receive a brief summary of the story's key elements. We hope that our effort would help busy readers understand news stories more quickly.
-
-<h1>Stakeholder Benefit</h1>:
 This tool can help busy professionals, students, and anybody else quickly comprehend the content of a news piece. It allows users to quickly extract vital information from lengthy articles, saving time and effort.
 
 
