@@ -51,11 +51,12 @@ summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 def fetch_article_content(url):
     try:
         response = requests.get(url)
+        response.raise_for_status()  # Raise HTTPError for bad status codes
         soup = BeautifulSoup(response.content, 'html.parser')
         article_text = " ".join([p.get_text() for p in soup.find_all('p')])
         return article_text
-    except:
-        st.error("Error fetching article content. Please check the URL.")
+    except requests.RequestException as e:
+        st.error(f"Error fetching article content: {str(e)}")
 
 # Streamlit app
 def main():
